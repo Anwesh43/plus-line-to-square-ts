@@ -83,6 +83,7 @@ class PlusLineSquareStage {
 
     canvas : HTMLCanvasElement = document.createElement('canvas')
     context : CanvasRenderingContext2D
+    renderer : Renderer = new Renderer()
 
     initCanvas() {
         this.canvas.width = w
@@ -94,11 +95,14 @@ class PlusLineSquareStage {
     render() {
         this.context.fillStyle = foreColor
         this.context.fillRect(0, 0, w, h)
+        this.renderer.render(this.context)
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.renderer.handleTap(() => {
+                this.render()
+            })
         }
     }
 
