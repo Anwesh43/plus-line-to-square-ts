@@ -9,6 +9,7 @@ const lines : number = 4
 const deg : number = Math.PI / 4
 const foreColor : string = "#311B92"
 const backColor : string = "#BDBDBD"
+const parts : number = 2
 
 class ScaleUtil {
 
@@ -31,5 +32,49 @@ class ScaleUtil {
 
     static updateValue(scale : number, dir : number, a : number, b : number) : number {
         return ScaleUtil.mirrorValue(scale, a, b) * dir * scGap
+    }
+}
+
+class DrawingUtil {
+
+    static drawLine(context : CanvasRenderingContext2D, x1 : number, y1 : number, x2 : number, y2 : number) {
+        context.beginPath()
+        context.moveTo(x1, y1)
+        context.lineTo(x2, y2)
+        context.stroke()
+    }
+
+    static drawPlusRotLine(context : CanvasRenderingContext2D, size : number, sc1 : number, sc2 : number) {
+        const l : number = size / Math.cos(deg)
+        for (var j = 0; j < parts; j++) {
+            const sf : number = 1 - 2 * j
+            const scj : number = ScaleUtil.divideScale(sc2, j, parts)
+            context.save()
+            context.rotate(deg * sf * scj)
+            DrawingUtil.drawLine(context, 0, 0, 0, l * sc1)
+            DrawingUtil.drawLine(context, 0, 0, size * scj * sf, 0)
+            context.restore()
+        }
+    }
+
+    static drawPLTSNode(context : CanvasRenderingContext2D, i : number, scale : number) {
+        const gap : number = w / (nodes + 1)
+        const size : number = gap / sizeFactor
+        const sc1 : number = ScaleUtil.divideScale(scale, 0, 2)
+        const sc2 : number = ScaleUtil.divideScale(scale, 1, 2)
+        context.lineCap = 'round'
+        context.lineWidth = Math.min(w, h) / strokeFactor
+        context.strokeStyle = foreColor
+        context.save()
+        context.translate(gap * (i + 1), h / 2)
+        for (var j = 0; j < lines; j++) {
+            const sc1j : number = ScaleUtil.divideScale(sc1, j, lines)
+            const sc2j : number = ScaleUtil.divideScale(sc2, j, lines)
+            context.save()
+            context.rotate(Math.PI/2 * j)
+            DrawingUtil.drawPlusRotLine(context, size, sc1j, sc2j)
+            context.restore()
+        }
+        context.restore()
     }
 }
