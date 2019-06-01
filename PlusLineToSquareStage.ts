@@ -38,6 +38,9 @@ class ScaleUtil {
 class DrawingUtil {
 
     static drawLine(context : CanvasRenderingContext2D, x1 : number, y1 : number, x2 : number, y2 : number) {
+        if (x1 == 0 && x2 == 0 && y2 == 0 && y1 == 0) {
+            return
+        }
         context.beginPath()
         context.moveTo(x1, y1)
         context.lineTo(x2, y2)
@@ -51,8 +54,11 @@ class DrawingUtil {
             const scj : number = ScaleUtil.divideScale(sc2, j, parts)
             context.save()
             context.rotate(deg * sf * scj)
-            DrawingUtil.drawLine(context, 0, 0, 0, l * sc1)
-            DrawingUtil.drawLine(context, 0, 0, size * scj * sf, 0)
+            DrawingUtil.drawLine(context, 0, 0, 0, size * sc1 + (l - size) * scj)
+            context.restore()
+            context.save()
+            context.translate(0, size)
+            DrawingUtil.drawLine(context, 0, 0, -size * scj * sf, 0)
             context.restore()
         }
     }
@@ -93,7 +99,7 @@ class PlusLineSquareStage {
     }
 
     render() {
-        this.context.fillStyle = foreColor
+        this.context.fillStyle = backColor
         this.context.fillRect(0, 0, w, h)
         this.renderer.render(this.context)
     }
