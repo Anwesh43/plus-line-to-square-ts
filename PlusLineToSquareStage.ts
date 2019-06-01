@@ -220,3 +220,24 @@ class PlusLineToSquare {
         this.curr.startUpdating(cb)
     }
 }
+
+class Renderer {
+
+    plts : PlusLineToSquare = new PlusLineToSquare()
+    animator : Animator = new Animator()
+
+    render(context : CanvasRenderingContext2D) {
+        this.plts.draw(context)
+    }
+
+    handleTap(cb : Function) {
+        this.plts.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.plts.update(() => {
+                    this.animator.stop()
+                })
+            })
+        })
+    }
+}
